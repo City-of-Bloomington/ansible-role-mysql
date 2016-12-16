@@ -2,7 +2,7 @@ City-of-Bloomington.mysql
 =========
 Ansible role for MySQL
 
-Requirements
+Dependencies
 ------------
 
 City-of-Bloomington.linux
@@ -11,10 +11,9 @@ Example Playbook
 ----------------
 
 ```yml
-- hosts: linux-solr
+- hosts: linux-mysql
   become: yes
   roles:
-  - City-of-Bloomington.linux
   - City-of-Bloomington.mysql
 ```
 
