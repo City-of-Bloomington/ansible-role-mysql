@@ -32,26 +32,3 @@
     src: local.cnf
     dest: /etc/mysql/mysql.conf.d/local.cnf
   notify: restart mysql
-
-#tasks from geerlingguy.mysql for creating databases and users
-- name: Ensure MySQL databases are present.
-  mysql_db:
-    name: "{{ item.name }}"
-    collation: "{{ item.collation | default('utf8_general_ci') }}"
-    encoding: "{{ item.encoding | default('utf8') }}"
-    state: present
-    config_file: /etc/mysql/debian.cnf
-  with_items: "{{ mysql_databases }}"
-
-- name: Ensure MySQL users are present.
-  mysql_user:
-    name: "{{ item.name }}"
-    host: "{{ item.host | default('localhost') }}"
-    password: "{{ item.password }}"
-    priv: "{{ item.priv | default('*.*:USAGE') }}"
-    state: "{{ item.state | default('present') }}"
-    append_privs: "{{ item.append_privs | default('no') }}"
-    config_file: /etc/mysql/debian.cnf
-  with_items: "{{ mysql_users }}"
-  no_log: true
-  
