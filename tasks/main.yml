@@ -9,26 +9,24 @@
     - libmysqlclient-dev
     - python-mysqldb
 
+- name: Set conf directory
+  set_fact:
+    mysql_extra_conf_dir: /etc/mysql/conf.d
+  when: ansible_distribution_version < '16.04'
+
+- name: Set conf directory
+  set_fact:
+    mysql_extra_conf_dir: /etc/mysql/mysql.conf.d
+  when: ansible_distribution_version >= '16.04'
+
 - name: Remove root user
   mysql_user:
     name: root
     state: absent
     config_file: /etc/mysql/debian.cnf
 
-# This is largely a convenience for sysadmins.
-#
-# We disable the root account, and each sysadmin should
-# have their own user account in the mysql databases.
-- name: Create user account
-  mysql_user:
-    name: "{{ ansible_user|default(lookup('env', 'USER'), True) }}"
-    password: "{{ mysql_account_password }}"
-    priv: "*.*:ALL,GRANT"
-    state: present
-    config_file: /etc/mysql/debian.cnf
-
 - name: Apply local conf settings
   copy:
     src: local.cnf
-    dest: /etc/mysql/mysql.conf.d/local.cnf
+    dest: "{{ mysql_extra_conf_dir }}/local.cnf"
   notify: restart mysql
