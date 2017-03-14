@@ -19,6 +19,10 @@
     mysql_extra_conf_dir: /etc/mysql/mysql.conf.d
   when: ansible_distribution_version >= '16.04'
 
+- name: Set defaults-extra-file
+  set_fact:
+    mysql_defaults_extra_file: /etc/mysql/debian.cnf
+
 - name: Remove root user
   mysql_user:
     name: root
@@ -30,3 +34,4 @@
     src: local.cnf
     dest: "{{ mysql_extra_conf_dir }}/local.cnf"
   notify: restart mysql
+...
