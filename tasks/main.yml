@@ -7,7 +7,16 @@
     - mysql-client
     - mysql-server
     - libmysqlclient-dev
-    - python-mysqldb
+
+- name: "Install mysql library for python3"
+  apt:
+    pkg: "python3-mysqldb"
+  when: ansible_python_version is version_compare('3', '>=')
+
+- name: "Install mysql library for python2"
+  apt:
+    pkg: "python-mysqldb"
+  when: ansible_python_version is version_compare('3', '<')
 
 - name: Set conf directory
   set_fact:
