@@ -30,8 +30,11 @@
     config_file: /etc/mysql/debian.cnf
 
 - name: Apply local conf settings
-  copy:
-    src: local.cnf
-    dest: "{{ mysql_extra_conf_dir }}/local.cnf"
-  notify: restart mysql
+  ini_file:
+    path: "{{ mysql_extra_conf_dir }}/local.cnf"
+    section: "mysqld"
+    option:  "{{ item.option  }}"
+    value:   "{{ item.value   }}"
+  with_items: "{{ mysql_conf }}"
+  notify: "mysql_restart"
 ...
