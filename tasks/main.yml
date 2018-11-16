@@ -41,7 +41,7 @@
 
 - name: Apply local conf settings
   ini_file:
-    path: "{{ mysql_extra_conf_dir }}/local.cnf"
+    path: "{{ mysql_extra_conf_dir }}/mysqld_local.cnf"
     section: "mysqld"
     option:  "{{ item.option  }}"
     value:   "{{ item.value   }}"
