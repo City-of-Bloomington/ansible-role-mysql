@@ -1,12 +1,13 @@
 ---
-- name: Install MySQL
+- name: "Install MySQL"
   apt:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - mysql-client
-    - mysql-server
-    - libmysqlclient-dev
+    name: "{{ packages }}"
+    state: "present"
+  vars:
+    packages:
+      - "mysql-client"
+      - "mysql-server"
+      - "libmysqlclient-dev"
 
 - name: "Install mysql library for python3"
   apt:
