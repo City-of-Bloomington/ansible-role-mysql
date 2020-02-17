@@ -19,27 +19,27 @@
     pkg: "python-mysqldb"
   when: ansible_python_version is version_compare('3', '<')
 
-- name: Set conf directory
+- name: 'Set conf directory'
   set_fact:
-    mysql_extra_conf_dir: /etc/mysql/conf.d
+    mysql_extra_conf_dir: '/etc/mysql/conf.d'
   when: ansible_distribution_version < '16.04'
 
-- name: Set conf directory
+- name: 'Set conf directory'
   set_fact:
-    mysql_extra_conf_dir: /etc/mysql/mysql.conf.d
+    mysql_extra_conf_dir: '/etc/mysql/mysql.conf.d'
   when: ansible_distribution_version >= '16.04'
 
-- name: Set defaults-extra-file
+- name: 'Set defaults-extra-file'
   set_fact:
-    mysql_defaults_extra_file: /etc/mysql/debian.cnf
+    mysql_defaults_extra_file: '/etc/mysql/debian.cnf'
 
-- name: Remove root user
+- name: 'Remove root user'
   mysql_user:
-    name: root
-    state: absent
-    config_file: /etc/mysql/debian.cnf
+    name:  'root'
+    state: 'absent'
+    config_file: "{{ mysql_defaults_extra_file }}"
 
-- name: Apply local conf settings
+- name: 'Apply local conf settings'
   ini_file:
     path: "{{ mysql_extra_conf_dir }}/mysqld_local.cnf"
     section: "mysqld"
@@ -47,4 +47,10 @@
     value:   "{{ item.value   }}"
   with_items: "{{ mysql_conf }}"
   notify: "mysql_restart"
+
+- name: 'Install backup cron script'
+  copy:
+    src:  'backup.sh'
+    dest: '/etc/cron.daily/backup.d/mysql'
+    mode: '0755'
 ...
