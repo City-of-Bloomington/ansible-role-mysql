@@ -1,6 +1,6 @@
 ---
 - name: "Install MySQL"
-  apt:
+  ansible.builtin.apt:
     name: "{{ packages }}"
     state: "present"
   vars:
@@ -8,40 +8,17 @@
       - "mysql-client"
       - "mysql-server"
       - "libmysqlclient-dev"
-
-- name: "Install mysql library for python3"
-  apt:
-    pkg: "python3-mysqldb"
-  when: ansible_python_version is version_compare('3', '>=')
-
-- name: "Install mysql library for python2"
-  apt:
-    pkg: "python-mysqldb"
-  when: ansible_python_version is version_compare('3', '<')
-
-- name: 'Set conf directory'
-  set_fact:
-    mysql_extra_conf_dir: '/etc/mysql/conf.d'
-  when: ansible_distribution_version < '16.04'
-
-- name: 'Set conf directory'
-  set_fact:
-    mysql_extra_conf_dir: '/etc/mysql/mysql.conf.d'
-  when: ansible_distribution_version >= '16.04'
-
-- name: 'Set defaults-extra-file'
-  set_fact:
-    mysql_defaults_extra_file: '/etc/mysql/debian.cnf'
+      - "python3-mysqldb"
 
 - name: 'Remove root user'
-  mysql_user:
+  community.mysql.mysql_user:
     name:  'root'
     state: 'absent'
-    config_file: "{{ mysql_defaults_extra_file }}"
+    config_file: "/etc/mysql/debian.cnf"
 
 - name: 'Apply local conf settings'
-  ini_file:
-    path: "{{ mysql_extra_conf_dir }}/mysqld_local.cnf"
+  community.general.ini_file:
+    path: "/etc/mysql/mysql.conf.d/mysqld_local.cnf"
     section: "mysqld"
     option:  "{{ item.option  }}"
     value:   "{{ item.value   }}"
@@ -49,7 +26,7 @@
   notify: "mysql_restart"
 
 - name: 'Install backup cron script'
-  copy:
+  ansible.builtin.template:
     src:  'backup.sh'
     dest: '/etc/cron.daily/backup.d/mysql'
     mode: '0755'
