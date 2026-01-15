@@ -25,6 +25,17 @@
   with_items: "{{ mysql_conf }}"
   notify: "mysql_restart"
 
+- name: 'Copy keys for backup user'
+  ansible.builtin.copy:
+    content: "{{ item.content }}"
+    dest: "/root/.ssh/{{ item.name }}"
+    mode: '0600'
+  no_log: "yes"
+  loop:
+    - { content: "{{ mysql_backup.id_rsa.private }}", name: "{{ mysql_backup.user }}" }
+    - { content: "{{ mysql_backup.id_rsa.public  }}", name: "{{ mysql_backup.user }}.pub" }
+  when: 'mysql_backup.user is defined'
+
 - name: 'Install backup cron script'
   ansible.builtin.template:
     src:  'backup.sh'
