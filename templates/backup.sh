@@ -29,7 +29,7 @@ do
         gzip $today.sql
 
         # Copy file to remote backup server
-        remote_dir=/srv/backups/$host/$database/$year_month
+        remote_dir={{ mysql_backup.path }}/$host/$database/$year_month
         ssh -n -i /root/.ssh/{{ mysql_backup.user }} {{ mysql_backup.user }}@{{ mysql_backup.host }} "mkdir -p $remote_dir"
         scp -i /root/.ssh/{{ mysql_backup.user }} $today.sql.gz {{ mysql_backup.user }}@{{ mysql_backup.host }}:$remote_dir
     fi
