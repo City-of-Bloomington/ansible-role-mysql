@@ -39,6 +39,6 @@
 - name: 'Install backup cron script'
   ansible.builtin.template:
     src:  'backup.sh'
-    dest: '/etc/cron.daily/backup.d/mysql'
+    dest: '/etc/cron.daily/mysql'
     mode: '0755'
 ...
